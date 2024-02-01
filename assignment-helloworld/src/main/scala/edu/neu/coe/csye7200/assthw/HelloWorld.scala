@@ -1,4 +1,5 @@
 package edu.neu.coe.csye7200.assthw
+import java.io
 
 /**
   * Created by scalaprof on 8/25/16.
@@ -11,6 +12,9 @@ package edu.neu.coe.csye7200.assthw
   */
 object HelloWorld extends App {
   def greeting = "Hello World!"
+  val f = (x:Int) => x*2
+  System.out.println("ncj")
+  println(f(3))
 
   println(greeting)
 }
