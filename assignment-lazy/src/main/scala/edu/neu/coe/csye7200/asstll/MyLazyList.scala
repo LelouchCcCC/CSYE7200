@@ -406,9 +406,7 @@ object MyLazyList {
    *         <code>x+step</code>, etc.).
    */
   def from(start: Int, step: Int): ListLike[Int] = {
-// TO BE IMPLEMENTED 
-
-???
+    MyLazyList(start,()=>from(start+step,step))
   }
 
 
