@@ -29,31 +29,59 @@ object P01 {
 
   @scala.annotation.tailrec
   def last[X](xs: List[X]): X =
-// TO BE IMPLEMENTED 
-???
+    xs match {
+      case Nil => throw new NoSuchElementException("empty list")
+      case h::Nil => h
+      case h::t => last(t)
+    }
 }
 
 object P02 {
 
-  @scala.annotation.tailrec
+//  @scala.annotation.tailrec
   def penultimate[X](xs: List[X]): X =
-// TO BE IMPLEMENTED 
-???
+// TO BE IMPLEMENTED
+  xs match {
+    case Nil | _::Nil => throw new NoSuchElementException()
+    case h::_::Nil => h
+    case _::t => penultimate(t)
+  }
 }
 
 object P03 {
 
-  @scala.annotation.tailrec
+//  @scala.annotation.tailrec
   def kth[X](k: Int, xs: List[X]): X =
-// TO BE IMPLEMENTED 
-???
+// TO BE IMPLEMENTED
+//  xs match {
+//    case Nil => throw new NoSuchElementException()
+//    case h::_ if k==0 => h
+//    case _::t => kth(k-1,t)
+//  }
+    (k,xs) match {
+      case (_,Nil) => throw new NoSuchElementException()
+      case (j,_) if j<0 => throw new NoSuchElementException()
+      case (0,h::_) => h
+      case (_,_::t) => kth(k-1,t)
+    }
 }
 
 object P04 {
 
   def length[X](xs: List[X]): Int =
-// TO BE IMPLEMENTED 
-???
+  {
+    @tailrec
+    def inner(xs: List[X],cnt:Int):Int =
+        xs match {
+          case Nil => 0
+          case _ :: t => inner(t,cnt+1)
+        }
+    inner(xs,0)
+  }
+// TO BE IMPLEMENTED
+
+
+
 }
 
 object P05 {
@@ -67,7 +95,7 @@ object P05 {
 object P06 {
 
   def isPalindrome[X](ys: List[X]): Boolean = {
-    @tailrec
+//    @tailrec
     def inner(r: Boolean, xs: List[X]): Boolean =
 // TO BE IMPLEMENTED 
 ???
