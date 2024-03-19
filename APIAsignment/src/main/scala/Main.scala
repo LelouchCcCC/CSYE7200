@@ -9,12 +9,14 @@ import scala.collection.immutable.Nil.foreach
 import scala.collection.immutable.Seq
 import scala.util.Success
 object Main {
-  val header: String = "Bearer BQDopcQPtpQ12ZR7JytnCF8uoki7Ov-ZARaNCggST6bZgtg9-4lQL0yXAQVNWOG7E_g03xSFCcRbuODw_WVUrCwNyoyCTliwo_pDRcNtKCkk6hgRZbXJJRhVP9TA5LKY9JWb3MIkVvnB-fzPLspUVJ0_pB4-wwpnTk79PzwVNyg9UQzEGv1bhONRl-G3T9YIS3IIhX1UlpNar1gVYfw"
+  private var cachedToken: Option[String] = None
+  val header: String = getToken()
   val root_url = "https://api.spotify.com/v1/playlists/5Rrf7mqN8uus2AaQQQNdc1"
   var data_save: Array[Map[String, Any]] = Array()
 
   def main(args: Array[String]): Unit = {
-    process(root_url)
+    val header: String = getToken()
+    process(root_url,header:String)
 //    data_save.foreach(println)
     println(data_save.length)
 
@@ -29,7 +31,7 @@ object Main {
     topTracks.foreach { track =>
       track("artists") match {
         case list: List[_] => list.foreach(li => {
-          var (tot,name) = people(li.toString)
+          var (tot,name) = people(li.toString,header)
           Thread.sleep(200)
           nametot :+= Tuple2(tot,name)
 //          println(s"${name}, ${tot}")
@@ -43,7 +45,7 @@ object Main {
 
   }
 
-  def process(uri: String): Unit = {
+  def process(uri: String,header:String): Unit = {
     val response: Response[String] = quickRequest
       .header("Authorization", header)
       .get(uri"${uri}")
@@ -75,11 +77,11 @@ object Main {
 
     val st: Option[String] = tracksNext.orElse(next)
 
-    st.foreach(process)
+    st foreach(i => process(i,header))
 
 
   }
-  def people(id:String) = {
+  def people(id:String,header:String) = {
     val s: String = "https://api.spotify.com/v1/artists/"+id
     val response: Response[String] = quickRequest
       .header("Authorization", header)
@@ -91,8 +93,32 @@ object Main {
     val name: Option[String] = (json \ "name").asOpt[String]
    (totalFollowers.get,name.get)
 
-
-
   }
 
+  case class TokenResponse(access_token: String, token_type: String, expires_in: Int)
+
+  def getToken(client_id: String = "06f17073266c4c2d965fc2e1bb48a556", client_secret: String = "6ada7986cd564f77ba185c02ad37f8d4"): String = {
+    val uri = uri"https://accounts.spotify.com/api/token"
+
+    val requestBody = Map(
+      "client_id" -> client_id,
+      "client_secret" -> client_secret,
+      "grant_type" -> "client_credentials"
+    )
+
+    val request = basicRequest
+      .post(uri)
+      .header("Content-Type", "application/x-www-form-urlencoded")
+      .body(requestBody)
+
+    val response = request.send()
+    val tokenResponse = response.body match {
+      case Right(body) => body
+      case Left(error) => throw new RuntimeException("Failed to get response: " + error)
+    }
+    println(tokenResponse)
+
+    val json: JsValue = Json.parse(tokenResponse)
+    (json \ "token_type").as[String] + " " + (json \ "access_token").as[String]
+  }
 }
