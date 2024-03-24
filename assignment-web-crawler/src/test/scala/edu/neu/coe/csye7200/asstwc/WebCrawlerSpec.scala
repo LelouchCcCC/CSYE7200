@@ -47,8 +47,8 @@ class WebCrawlerSpec extends AnyFlatSpec with should.Matchers with Futures with 
     }
 
     behavior of "wget(Seq[URL])"
-    it should s"succeed for $goodURL, https://www.google.com/" taggedAs Slow in {
-        val ws = List(goodURL, "https://www.google.com/")
+    it should s"succeed for $goodURL, http://www.google.com/" taggedAs Slow in {
+        val ws = List(goodURL, "http://www.google.com/")
         val uys = for (w <- ws) yield Try(new URL(w))
         val usesfy: Try[Future[Seq[URL]]] = for {us <- MonadOps.sequence(uys)} yield WebCrawler.wget(us) {
             case NonFatal(x) => System.err.println(s"ignored error: $x"); Success(None)

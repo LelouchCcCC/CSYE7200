@@ -259,7 +259,7 @@ object MonadOps {
    */
   def asOption[X](xe: Either[Throwable, X]): Option[X] =
 // TO BE IMPLEMENTED 
-???
+xe.toOption
 
 
   /**
